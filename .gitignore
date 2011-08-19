@@ -1,0 +1,11 @@
+filter-requires-perl-Pg.sh
+postgresql-bashprofile
+postgresql.pam
+ecpg_config.h
+README.rpm-dist
+pg_config.h
+Makefile.regress
+postgresql.init
+generate-pdf.sh
+postgresql-8.4.4-US.pdf
+postgresql-8.4.4.tar.bz2
