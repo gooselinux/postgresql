@@ -52,8 +52,8 @@
 Summary: PostgreSQL client programs
 Name: postgresql
 %global majorversion 8.4
-Version: 8.4.4
-Release: 2%{?dist}
+Version: 8.4.5
+Release: 1%{?dist}.2
 # The PostgreSQL license is very similar to other MIT licenses, but the OSI
 # recognizes it as an independent license, so we do as well.
 License: PostgreSQL
@@ -287,6 +287,9 @@ autoconf
 
 cp -p %{SOURCE1} .
 
+# remove .gitignore files to ensure none get into the RPMs (bug #642210)
+find . -type f -name .gitignore | xargs rm
+
 %build
 
 # fail quickly and obviously if user tries to build as root
@@ -357,8 +360,7 @@ CFLAGS="$CFLAGS -DLINUX_OOM_ADJ=0"
 %endif
 	--with-system-tzdata=/usr/share/zoneinfo \
 	--sysconfdir=/etc/sysconfig/pgsql \
-	--datadir=/usr/share/pgsql \
-	--with-docdir=%{_docdir}
+	--datadir=/usr/share/pgsql
 
 make %{?_smp_mflags} all
 make %{?_smp_mflags} -C contrib all
@@ -626,6 +628,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files libs -f libs.lst
 %defattr(-,root,root)
+%doc COPYRIGHT
 %{_libdir}/libpq.so.*
 %{_libdir}/libecpg.so.*
 %{_libdir}/libpgtypes.so.*
@@ -713,6 +716,16 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Mon Nov 15 2010 Tom Lane <tgl@redhat.com> 8.4.5-1.el6_0.2
+- Ensure we don't package any .gitignore files from the source tarball (650913)
+
+* Mon Oct  4 2010 Tom Lane <tgl@redhat.com> 8.4.5-1.el6_0.1
+- Update to PostgreSQL 8.4.5, for various fixes described at
+  http://www.postgresql.org/docs/8.4/static/release-8-4-5.html
+  including the fix for CVE-2010-3433
+Resolves: #640069
+- Duplicate COPYRIGHT in -libs subpackage, per revised packaging guidelines
+
 * Mon Jun 28 2010 Tom Lane <tgl@redhat.com> 8.4.4-2
 - Add -p "$pidfile" to initscript's status call to improve corner cases.
   (Note: can't be fixed in Fedora until 595597 is fixed there.)
